@@ -4,9 +4,9 @@ Platformer Game
 import arcade
 
 # Constants
-SCREEN_WIDTH = 1000
-SCREEN_HEIGHT = 650
-SCREEN_TITLE = "Platformer"
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 1024
+SCREEN_TITLE = "Super Smashers"
 
 # Constants used to scale our sprites from their original size
 CHARACTER_SCALING = 1
@@ -16,16 +16,16 @@ SPRITE_PIXEL_SIZE = 128
 GRID_PIXEL_SIZE = (SPRITE_PIXEL_SIZE * TILE_SCALING)
 
 # Movement speed of player, in pixels per frame
-PLAYER_MOVEMENT_SPEED = 5
+PLAYER_MOVEMENT_SPEED = 10
 GRAVITY = 1
 PLAYER_JUMP_SPEED = 25
 
 # How many pixels to keep as a minimum margin between the character
 # and the edge of the screen.
-LEFT_VIEWPORT_MARGIN = 200
-RIGHT_VIEWPORT_MARGIN = 200
-BOTTOM_VIEWPORT_MARGIN = 150
-TOP_VIEWPORT_MARGIN = 100
+LEFT_VIEWPORT_MARGIN = SCREEN_WIDTH / 3
+RIGHT_VIEWPORT_MARGIN = SCREEN_WIDTH / 3
+BOTTOM_VIEWPORT_MARGIN = SCREEN_HEIGHT / 4
+TOP_VIEWPORT_MARGIN = SCREEN_HEIGHT / 4
 
 PLAYER_START_X = 64
 PLAYER_START_Y = 94
@@ -78,6 +78,10 @@ class MyGame(arcade.Window):
     def setup(self, level):
         """ Set up the game here. Call this function to restart the game. """
         self.keys_held = 0
+        self.velocity_x = 0
+        self.velocity_y = 0
+        self.left_pressed = False
+        self.right_pressed = False
 
         # Used to keep track of our scrolling
         self.view_bottom = 0
@@ -167,25 +171,23 @@ class MyGame(arcade.Window):
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
-
-        if key == arcade.key.UP or key == arcade.key.W:
+        if key == arcade.key.UP or key == arcade.key.W or key == arcade.key.SPACE:
             if self.physics_engine.can_jump():
                 self.player_sprite.change_y = PLAYER_JUMP_SPEED
                 arcade.play_sound(self.jump_sound)
-        elif key == arcade.key.LEFT or key == arcade.key.A:
-            self.player_sprite.change_x = -PLAYER_MOVEMENT_SPEED
-        elif key == arcade.key.RIGHT or key == arcade.key.D:
-            self.player_sprite.change_x = PLAYER_MOVEMENT_SPEED
+        if key == arcade.key.LEFT or key == arcade.key.A:
+            self.left_pressed = True
+        if key == arcade.key.RIGHT or key == arcade.key.D:
+            self.right_pressed = True
+        if key == arcade.key.V:
+            self.complete_level()
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key. """
-
         if key == arcade.key.LEFT or key == arcade.key.A:
-            self.player_sprite.change_x = 0
+            self.left_pressed = False
         elif key == arcade.key.RIGHT or key == arcade.key.D:
-            self.player_sprite.change_x = 0
-        elif key == arcade.key.V:
-            self.complete_level()
+            self.right_pressed = False
 
     def complete_level(self):
          # Advance to the next level
@@ -201,6 +203,17 @@ class MyGame(arcade.Window):
 
     def update(self, delta_time):
         """ Movement and game logic """
+        self.player_sprite.change_x -= 1
+        if self.left_pressed:
+            self.velocity_x = min(max(-PLAYER_MOVEMENT_SPEED, self.velocity_x - 1), PLAYER_MOVEMENT_SPEED)
+        if self.right_pressed:
+            self.velocity_x = min(max(-PLAYER_MOVEMENT_SPEED, self.velocity_x + 1), PLAYER_MOVEMENT_SPEED)
+        if not self.right_pressed and not self.left_pressed:
+            if self.velocity_x > 0:
+                self.velocity_x -= 1
+            elif self.velocity_x < 0:
+                self.velocity_x += 1
+        self.player_sprite.change_x = self.velocity_x
 
         # Call update on all sprites (The sprites don't do much in this
         # example though.)

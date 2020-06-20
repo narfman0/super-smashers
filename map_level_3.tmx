@@ -548,17 +548,17 @@
  </tileset>
  <layer id="6" name="Platforms" width="40" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFo2AUjILBA1xxsEcBKnAEYh8odiJC/WhYEgcKgLgQiIvwqBkNy8EBvBkQeYBSzIaEGahgni8Q245iijAAgzQhVQ==
+   eJxjYBgFo2AUjILBA1xxsEcBKnAEYh8odiJC/XAJS1qnDzcgdgdiDxqYPQqoC7wZEHmAUswGxTCATQ0+gK7WF4htRzFFGAAH8x8C
   </data>
  </layer>
  <layer id="7" name="Coins" width="40" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFo2DoghUD7YBRMGzBaNqiHRgN2+EDRuNyFNAKAAAbowKh
+   eJxjYBgFo2DoghUD7YBRMGzBSE1bK3CwaWXHKBjaYDQuRwGtAAAL3QPx
   </data>
  </layer>
  <layer id="8" name="Don't Touch" width="40" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFo2AUjIJRMApGwSgYucAUDY+CgQcAVEcA1Q==
+   eJxjYBgFo2AUjIJRMApGwSgYucAUDWMDJnjwKKA+AABOlQJB
   </data>
  </layer>
  <layer id="9" name="Foreground" width="40" height="17">
