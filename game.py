@@ -48,6 +48,8 @@ class MyGame(arcade.Window):
         self.background_list = None
         self.dont_touch_list = None
         self.player_list = None
+        self.keys_list = None
+        self.doors_list = None
 
         # Separate variable that holds the player sprite
         self.player_sprite = None
@@ -75,6 +77,7 @@ class MyGame(arcade.Window):
 
     def setup(self, level):
         """ Set up the game here. Call this function to restart the game. """
+        self.keys_held = 0
 
         # Used to keep track of our scrolling
         self.view_bottom = 0
@@ -85,10 +88,6 @@ class MyGame(arcade.Window):
 
         # Create the Sprite lists
         self.player_list = arcade.SpriteList()
-        self.foreground_list = arcade.SpriteList()
-        self.background_list = arcade.SpriteList()
-        self.wall_list = arcade.SpriteList()
-        self.coin_list = arcade.SpriteList()
 
         # Set up the player, specifically placing it at these coordinates.
         self.player_sprite = arcade.Sprite("images/player_1/player_stand.png", CHARACTER_SCALING)
@@ -108,6 +107,10 @@ class MyGame(arcade.Window):
         background_layer_name = 'Background'
         # Name of the layer that has items we shouldn't touch
         dont_touch_layer_name = "Don't Touch"
+        # Name of the layer that has keys
+        keys_layer_name = "Keys"
+        # Name of the layer that has doors
+        doors_layer_name = "Doors"
 
         # Map name
         map_name = f"map_level_{level}.tmx"
@@ -120,24 +123,13 @@ class MyGame(arcade.Window):
 
         # Calculate the right edge of the my_map in pixels
         self.end_of_map = len(map_array[0]) * GRID_PIXEL_SIZE
-
-        # -- Background
         self.background_list = arcade.generate_sprites(my_map, background_layer_name, TILE_SCALING)
-
-        # -- Foreground
         self.foreground_list = arcade.generate_sprites(my_map, foreground_layer_name, TILE_SCALING)
-
-        # -- Platforms
         self.wall_list = arcade.generate_sprites(my_map, platforms_layer_name, TILE_SCALING)
-
-        # -- Platforms
-        self.wall_list = arcade.generate_sprites(my_map, platforms_layer_name, TILE_SCALING)
-
-        # -- Coins
         self.coin_list = arcade.generate_sprites(my_map, coins_layer_name, TILE_SCALING)
-
-        # -- Don't Touch Layer
+        self.doors_list = arcade.generate_sprites(my_map, doors_layer_name, TILE_SCALING)
         self.dont_touch_list = arcade.generate_sprites(my_map, dont_touch_layer_name, TILE_SCALING)
+        self.keys_list = arcade.generate_sprites(my_map, keys_layer_name, TILE_SCALING)
 
         self.end_of_map = (len(map_array[0]) - 1) * GRID_PIXEL_SIZE
 
@@ -162,9 +154,11 @@ class MyGame(arcade.Window):
         self.background_list.draw()
         self.wall_list.draw()
         self.coin_list.draw()
+        self.keys_list.draw()
         self.player_list.draw()
         self.foreground_list.draw()
         self.dont_touch_list.draw()
+        self.doors_list.draw()
 
         # Draw our score on the screen, scrolling it with the viewport
         score_text = f"Score: {self.score}"
@@ -190,6 +184,20 @@ class MyGame(arcade.Window):
             self.player_sprite.change_x = 0
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.player_sprite.change_x = 0
+        elif key == arcade.key.V:
+            self.complete_level()
+
+    def complete_level(self):
+         # Advance to the next level
+        self.level += 1
+
+        # Load the next level
+        self.setup(self.level)
+
+        # Set the camera to the start
+        self.view_left = 0
+        self.view_bottom = 0
+        changed_viewport = True
 
     def update(self, delta_time):
         """ Movement and game logic """
@@ -236,18 +244,24 @@ class MyGame(arcade.Window):
             changed_viewport = True
             arcade.play_sound(self.game_over)
 
+        # Did the player touch a key?
+        keys_collided = arcade.check_for_collision_with_list(self.player_sprite, self.keys_list)
+        for key in keys_collided:
+            key.remove_from_sprite_lists()
+            arcade.play_sound(self.collect_coin_sound)
+            self.keys_held += 1
+            
+        # Did the player touch a door?
+        doors_collided = arcade.check_for_collision_with_list(self.player_sprite, self.doors_list)
+        for door in doors_collided:
+            if self.keys_held > 0:
+                door.remove_from_sprite_lists()
+                arcade.play_sound(self.collect_coin_sound)
+                self.keys_held -= 1
+
         # See if the user got to the end of the level
         if self.player_sprite.center_x >= self.end_of_map:
-            # Advance to the next level
-            self.level += 1
-
-            # Load the next level
-            self.setup(self.level)
-
-            # Set the camera to the start
-            self.view_left = 0
-            self.view_bottom = 0
-            changed_viewport = True
+            self.complete_level()
 
         # --- Manage Scrolling ---
 
