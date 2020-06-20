@@ -518,7 +518,7 @@
  </tileset>
  <layer id="1" name="Platforms" width="40" height="15">
   <data encoding="base64" compression="zlib">
-   eJwTZ2BgECcDD2Yw6j7KwKj7yAej+YNyMJjchy0+B5P7sIFR9xG2H58bBtp9uEDRQDuAAMhhoL8bUwc5BgCMBxPL
+   eJwTZ2BgECcD0wOQa8+o+yizZ9R95Nszmj8ot4dYfeSUR+I42ITswGUGtQGp7iNkBrn6cYUtLdxHzXqFGPcRsmuwxm8RNR2CA1Di9xwG2rsR3X2pgxwDABhMFmY=
   </data>
  </layer>
  <layer id="8" name="Doors" width="40" height="15">
@@ -548,7 +548,7 @@
  </layer>
  <layer id="2" name="Don't Touch" width="40" height="15">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFo2AUjIJRMApGwWACnmh4sAEPNDwKMAEASAUCRQ==
+   eJxjYBgFo2AUjALcoHegHTCMAT3DdjQehxbwRMODDXig4VGACQAzvgPs
   </data>
  </layer>
 </map>
